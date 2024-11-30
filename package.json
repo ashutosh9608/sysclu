@@ -8,7 +8,10 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "node server/index.js"
+    "server": "node server/index.js",
+    "homepage":"https://raj572.github.io/sysclu",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@emailjs/browser": "^4.3.3",
@@ -16,6 +19,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.3",
     "framer-motion": "^11.0.8",
+    "gh-pages": "^6.2.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
