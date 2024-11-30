@@ -1,0 +1,237 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-color: #03030a;
+  --text-color: #dde2ff;
+  --text-color-alt: #94979e;
+  --primary-color: #9dff13;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.text-gradient {
+  background: linear-gradient(to right, #9dff13, #8ae610);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Animated background blob */
+@keyframes blob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Gradient background */
+.gradient-bg {
+  background: radial-gradient(circle at top left, rgba(157, 255, 19, 0.1), transparent 50%),
+              radial-gradient(circle at bottom right, rgba(157, 255, 19, 0.1), transparent 50%);
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: #03030a;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #03030a;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #9dff13;
+  border-radius: 10px;
+  border: 2px solid #03030a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #8ae610;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #9dff13 #03030a;
+}
+
+/* For when the scrollbar corner is visible */
+::-webkit-scrollbar-corner {
+  background-color: #03030a;
+}
+
+/* Update hover states for cards */
+.card-hover {
+  @apply transition-all duration-300 hover:bg-[#ffffff08] hover:border-[#ffffff15];
+}
+
+/* Update button styles */
+.button-with-icon {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: all 0.3s ease;
+}
+
+.button-with-icon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(157, 255, 19, 0.15);
+}
+
+.button-with-icon:active {
+  transform: translateY(1px);
+}
+
+.button-with-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(157, 255, 19, 0.8),
+    rgba(138, 230, 16, 0.8)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 0.5rem;
+  z-index: 1;
+}
+
+.button-with-icon:hover::before {
+  opacity: 1;
+}
+
+.button-with-icon span {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: transform 0.3s ease;
+}
+
+/* Custom select styles */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+select option {
+  background-color: #03030a;
+  color: #dde2ff;
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #ffffff08;
+  transition: all 0.2s ease;
+}
+
+select option:hover,
+select option:focus,
+select option:active,
+select option:checked {
+  background: linear-gradient(to right, #03030a, #ffffff08) !important;
+  background-color: #ffffff08 !important;
+  color: #9dff13 !important;
+}
+
+select option:checked {
+  background: linear-gradient(to right, rgba(157, 255, 19, 0.1), rgba(157, 255, 19, 0.05)) !important;
+  color: #9dff13 !important;
+  font-weight: 500;
+}
+
+/* For Firefox */
+select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #fff;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+/* Style for the select container */
+.select-container {
+  position: relative;
+  width: 100%;
+}
+
+.select-container select {
+  width: 100%;
+  padding-right: 40px; /* Space for the custom arrow */
+}
+
+/* Custom arrow styles */
+.select-container::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #9dff13;
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+.select-container:hover::after {
+  transform: translateY(-50%) scale(1.2);
+}
+
+/* Active state for the select */
+select:focus {
+  border-color: #9dff13;
+  box-shadow: 0 0 0 2px rgba(157, 255, 19, 0.1);
+  outline: none;
+}
