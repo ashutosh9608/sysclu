@@ -1,12 +1,14 @@
+import axios from 'axios';
 import { motion } from 'framer-motion';
+import { ArrowRight, BarChart3, ChevronDown, Code, Mail, MapPin, MessageSquare, Palette, Phone, Plus, Send, Share2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import PageTransition from '../components/PageTransition';
-import { Mail, Phone, MapPin, Send, MessageSquare, ArrowRight } from 'lucide-react';
 
 const Contact = () => {
   return (
     <PageTransition>
-      <div className="min-h-screen pt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -32,13 +34,91 @@ const Contact = () => {
 };
 
 const ContactForm = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('');
+  const [responseMessage, setResponseMessage] = useState('');
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const nameElement = useRef<HTMLInputElement>(null);
+  const phoneElement = useRef<HTMLInputElement>(null);
+  const emailElement = useRef<HTMLInputElement>(null);
+  const subjectElement = useRef<HTMLInputElement>(null);
+  const messageElement = useRef<HTMLTextAreaElement>(null);
+  
+
   const serviceOptions = [
-    { value: 'web-development', label: 'Web Development' },
-    { value: 'graphic-design', label: 'Graphic Design' },
-    { value: 'data-analysis', label: 'Data Analysis' },
-    { value: 'social-media', label: 'Social Media Management' },
-    { value: 'other', label: 'Other' }
+    { 
+      value: 'web-development', 
+      label: 'Web Development',
+      description: 'Custom websites and web applications',
+      icon: Code
+    },
+    { 
+      value: 'graphic-design', 
+      label: 'Graphic Design',
+      description: 'Creative visual design solutions',
+      icon: Palette
+    },
+    { 
+      value: 'data-analysis', 
+      label: 'Data Analysis',
+      description: 'Data insights and analytics',
+      icon: BarChart3
+    },
+    { 
+      value: 'social-media', 
+      label: 'Social Media',
+      description: 'Social media management',
+      icon: Share2
+    },
+    { 
+      value: 'other', 
+      label: 'Other Services',
+      description: 'Custom solutions for your needs',
+      icon: Plus
+    }
   ];
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+    const handleSubmit = async () => {
+      const name = nameElement.current?.value;
+      const phone = phoneElement.current?.value;
+      const email = emailElement.current?.value;
+      const subject = subjectElement.current?.value;
+      const message = messageElement.current?.value;
+      const service = selectedOption;
+      try{
+      const response = await axios.post(`http://localhost:8080/api/users/saveenquery`,{ 
+      name:name, 
+      contact:phone, 
+      email:email, 
+      message:message, 
+      service:service,
+      subject:subject
+     });
+        console.log(response);
+      // console.log({ name, phone, email, message, service });
+        if (nameElement.current) nameElement.current.value = '';
+        if (phoneElement.current) phoneElement.current.value = '';
+        if (emailElement.current) emailElement.current.value = '';
+        if (subjectElement.current) subjectElement.current.value = '';
+        if (messageElement.current) messageElement.current.value = '';
+        setResponseMessage('Your enquiry has been submitted successfully!');
+      
+    } catch (error){
+      setResponseMessage('Failed to submit your enquiry. Please try again.');
+      
+    }
+    };
+
 
   return (
     <motion.div
@@ -48,7 +128,8 @@ const ContactForm = () => {
       className="bg-[#03030a]/80 backdrop-blur-sm p-8 rounded-xl border border-[#ffffff08]"
     >
       <h2 className="text-2xl font-bold mb-6">Send us a Message</h2>
-      <form className="space-y-6">
+      {responseMessage}
+      <form className="space-y-6" onSubmit={(e) =>{ e.preventDefault(); handleSubmit()}}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-[#94979e] mb-2">
@@ -57,10 +138,25 @@ const ContactForm = () => {
             <input
               type="text"
               id="name"
+              ref={nameElement}
               className="w-full bg-[#ffffff08] border border-[#ffffff15] rounded-lg px-4 py-3 text-white 
                 focus:outline-none focus:border-[#9dff13] focus:ring-1 focus:ring-[#9dff13] 
                 transition-all duration-200 placeholder-[#94979e]/50"
               placeholder="John Doe"
+            />
+          </div>
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-[#94979e] mb-2">
+              Phone no.
+            </label>
+            <input
+              type="phone"
+              id="phone"
+              ref={phoneElement}
+              className="w-full bg-[#ffffff08] border border-[#ffffff15] rounded-lg px-4 py-3 text-white 
+                focus:outline-none focus:border-[#9dff13] focus:ring-1 focus:ring-[#9dff13] 
+                transition-all duration-200 placeholder-[#94979e]/50"
+              placeholder="contact number"
             />
           </div>
           <div>
@@ -70,6 +166,7 @@ const ContactForm = () => {
             <input
               type="email"
               id="email"
+              ref={emailElement}
               className="w-full bg-[#ffffff08] border border-[#ffffff15] rounded-lg px-4 py-3 text-white 
                 focus:outline-none focus:border-[#9dff13] focus:ring-1 focus:ring-[#9dff13] 
                 transition-all duration-200 placeholder-[#94979e]/50"
@@ -81,24 +178,58 @@ const ContactForm = () => {
           <label htmlFor="service" className="block text-sm font-medium text-[#94979e] mb-2">
             Service
           </label>
-          <div className="relative select-container">
-            <select
-              id="service"
-              className="w-full bg-[#ffffff08] border border-[#ffffff15] rounded-lg px-4 py-3 text-white 
-                focus:outline-none focus:border-[#9dff13] focus:ring-1 focus:ring-[#9dff13] 
-                transition-all duration-200 appearance-none cursor-pointer"
-              defaultValue=""
+          <div className="relative" ref={dropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className={`w-full bg-[#03030a] border ${isOpen ? 'border-[#9dff13]' : 'border-[#ffffff15]'} 
+                rounded-lg px-4 py-3 text-left focus:outline-none focus:border-[#9dff13] 
+                transition-all duration-200 group`}
             >
-              <option value="" disabled>Select a service</option>
-              {serviceOptions.map((option) => (
-                <option 
-                  key={option.value} 
-                  value={option.value}
-                >
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <span className={selectedOption ? 'text-white' : 'text-[#94979e]'}>
+                {selectedOption || 'Select a service'}
+              </span>
+              <ChevronDown 
+                className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 
+                  ${isOpen ? 'text-[#9dff13]' : 'text-[#94979e]'} 
+                  transition-all duration-200 ${isOpen ? 'transform rotate-180' : ''}`}
+              />
+            </button>
+
+            {isOpen && (
+              <div className="absolute z-10 w-full mt-2 bg-[#03030a] border border-[#ffffff15] 
+                rounded-lg shadow-lg overflow-hidden">
+                {serviceOptions.map((option) => {
+                  const Icon = option.icon;
+                  return (
+                    <button
+                      type="button"
+                      key={option.value}
+                      onClick={() => {
+                        setSelectedOption(option.label);
+                        setIsOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-[#9dff13]/10 
+                        transition-colors duration-150 flex items-center gap-3 group"
+                    >
+                      <div className="text-[#9dff13] group-hover:text-[#9dff13]">
+                        <Icon size={20} />
+                      </div>
+                      <div>
+                        <div className={`font-medium ${
+                          selectedOption === option.label ? 'text-[#9dff13]' : 'text-white'
+                        } group-hover:text-[#9dff13]`}>
+                          {option.label}
+                        </div>
+                        <div className="text-sm text-[#94979e] group-hover:text-white/70">
+                          {option.description}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
         <div>
@@ -108,6 +239,7 @@ const ContactForm = () => {
           <input
             type="text"
             id="subject"
+            ref={subjectElement}
             className="w-full bg-[#ffffff08] border border-[#ffffff15] rounded-lg px-4 py-3 text-white 
               focus:outline-none focus:border-[#9dff13] focus:ring-1 focus:ring-[#9dff13] 
               transition-all duration-200 placeholder-[#94979e]/50"
@@ -120,6 +252,7 @@ const ContactForm = () => {
           </label>
           <textarea
             id="message"
+            ref={messageElement}
             rows={6}
             className="w-full bg-[#ffffff08] border border-[#ffffff15] rounded-lg px-4 py-3 text-white 
               focus:outline-none focus:border-[#9dff13] focus:ring-1 focus:ring-[#9dff13] 

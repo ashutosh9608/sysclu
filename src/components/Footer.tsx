@@ -46,10 +46,7 @@ const Footer = () => {
                 Icon={Facebook} 
                 href="https://www.facebook.com/profile.php?id=61569718163716&mibextid=ZbWKwL" 
               />
-              <SocialIcon 
-                Icon={Twitter} 
-                href="https://x.com/syscluinfo?t=IetImTeD-juW1BvMjKwVIQ&s=09" 
-              />
+             
               <SocialIcon 
                 Icon={Instagram} 
                 href="https://www.instagram.com/sysclu/profilecard/?igsh=OWk2cDhhOTNsdTBk" 

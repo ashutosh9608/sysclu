@@ -1,27 +1,25 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import Home from './pages/Home';
-import Services from './pages/Services';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Learning from './pages/Learning';
-import WebDevelopment from './pages/services/WebDevelopment';
-import GraphicDesign from './pages/services/GraphicDesign';
-import DataAnalysis from './pages/services/DataAnalysis';
-import SocialMedia from './pages/services/SocialMedia';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
-import HireFreelancer from './pages/HireFreelancer';
-import GetHired from './pages/GetHired';
-import Navbar from './components/Navbar';
+import { AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import Admin from './Admin/Admin';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
+import Navbar from './components/Navbar';
 import PageLoader from './components/PageLoader';
-import { AnimatePresence } from 'framer-motion';
-import DevelopmentNotice from './components/DevelopmentNotice';
-import WireframeBackground from './components/WireframeBackground';
+import ProtectedRoute from './components/ProtectedRoute';
+// import WireframeBackground from './components/WireframeBackground';
+import ForgotPassword from './components/alterUsers/ForgetPassword';
+import Registration from './components/alterUsers/Registration';
+import ResetPassword from './components/alterUsers/ResetPassword';
+import ErrorPage from './components/ErrorPage';
+import { AuthProvider } from './context/AuthContext';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Home from './pages/Home';
+import Services from './pages/Services';
+import User from './User/User';
 
-function App() {
+const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const location = useLocation();
@@ -44,45 +42,48 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#03030a] text-white flex flex-col relative">
-      <WireframeBackground />
-      <DevelopmentNotice />
-      <Navbar />
-      <main className="flex-grow pt-24 relative z-10">
-        <AnimatePresence mode="wait">
-          {isPageLoading ? (
-            <PageLoader key="pageLoader" />
-          ) : (
-            <Routes>
-              {/* Home page */}
-              <Route path="/" element={<Home />} />
-              
-              {/* Main pages */}
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/learning" element={<Learning />} />
-              
-              {/* Services pages */}
-              <Route path="/services" element={<Services />} />
-              <Route path="/services/web-development" element={<WebDevelopment />} />
-              <Route path="/services/graphic-design" element={<GraphicDesign />} />
-              <Route path="/services/data-analysis" element={<DataAnalysis />} />
-              <Route path="/services/social-media" element={<SocialMedia />} />
-
-              {/* Work pages */}
-              <Route path="/hire-freelancer" element={<HireFreelancer />} />
-              <Route path="/get-hired" element={<GetHired />} />
-
-              {/* Legal pages */}
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-            </Routes>
-          )}
-        </AnimatePresence>
-      </main>
-      <Footer />
-    </div>
+    <AuthProvider>
+      <div className="min-h-screen bg-[#03030a] text-white flex flex-col relative">
+        {/* <WireframeBackground /> */}
+        {!location.pathname.includes('/admin') && 
+         !location.pathname.includes('/user') && <Navbar />}
+        <main className="flex-grow relative z-10">
+          <AnimatePresence mode="wait">
+            {isPageLoading ? (
+              <PageLoader key="pageLoader" />
+            ) : (
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/services" element={<Services/>}/>
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />   
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/error" element={<ErrorPage />} />
+                <Route path="/register" element={<Registration />} />
+                
+                <Route path="/user/*" element={
+                  <ProtectedRoute allowedRole="user">
+                    <User />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/admin/*" element={
+                  <ProtectedRoute allowedRole="admin">
+                    <Admin />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            )}
+          </AnimatePresence>
+        </main>
+        {!location.pathname.includes('/admin') && 
+         !location.pathname.includes('/user') && <Footer />}
+      </div>
+    </AuthProvider>
   );
-}
+};
 
 export default App;
